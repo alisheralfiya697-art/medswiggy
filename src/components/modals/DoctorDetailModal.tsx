@@ -47,7 +47,7 @@ export const DoctorDetailModal: React.FC<DoctorDetailModalProps> = ({
   const [patientPhone, setPatientPhone] = useState<string>('+91 98765 43210');
 
   const currentSlotGroup =
-    doctor.availableSlots.find((s) => s.date === selectedDate) || doctor.availableSlots[0];
+    doctor.availableSlots.find((s: { date: string; slots: string[] }) => s.date === selectedDate) || doctor.availableSlots[0];
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,7 +199,7 @@ export const DoctorDetailModal: React.FC<DoctorDetailModalProps> = ({
               <Calendar className="w-3.5 h-3.5 text-orange-500" /> Select Date
             </label>
             <div className="flex gap-2 overflow-x-auto pb-1">
-              {doctor.availableSlots.map((item) => (
+              {doctor.availableSlots.map((item: { date: string; slots: string[] }) => (
                 <button
                   key={item.date}
                   type="button"
@@ -225,7 +225,7 @@ export const DoctorDetailModal: React.FC<DoctorDetailModalProps> = ({
               <Clock className="w-3.5 h-3.5 text-emerald-600" /> Available Time Slots
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {currentSlotGroup?.slots.map((slot) => {
+              {currentSlotGroup?.slots.map((slot: string) => {
                 const isSelected = selectedSlot === slot;
                 return (
                   <button

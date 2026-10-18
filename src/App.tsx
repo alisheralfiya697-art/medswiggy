@@ -4,10 +4,13 @@ import {
   Users,
   TestTube2,
   Building2,
-  Camera,
+  CalendarCheck,
+  ShoppingBag,
+  Pill,
+  ShieldCheck,
   Smartphone,
   Monitor,
-  CalendarCheck,
+  Camera,
 } from 'lucide-react';
 
 import {
@@ -20,6 +23,9 @@ import {
   DiagnosticBooking,
   ActiveTab,
   ViewAllCategory,
+  ActivePortion,
+  BookingReceipt,
+  ClinicalBundleItem,
 } from './types';
 
 import {
@@ -31,6 +37,20 @@ import {
   HOSPITAL_BRANCHES,
 } from './data/mockData';
 
+// Master Header & Unified Deliverables
+import { MasterSuiteHeader } from './components/navigation/MasterSuiteHeader';
+import { UnifiedDeliverablesModal } from './components/deliverables/UnifiedDeliverablesModal';
+
+// Portion 1: AuraCare
+import { AuraCareStaffScreen } from './components/portion1_auracare/AuraCareStaffScreen';
+
+// Portion 2: AuraHealth
+import { AuraHealthDirectoryScreen } from './components/portion2_aurahealth/AuraHealthDirectoryScreen';
+
+// Portion 3: AuraFlow Clinical OS
+import { AuraFlowClinicalScreen } from './components/portion3_auraflow/AuraFlowClinicalScreen';
+
+// Portion 4: MedSwiggy
 import { SwiggyHeader } from './components/header/SwiggyHeader';
 import { PromoBannerCarousel } from './components/banner/PromoBannerCarousel';
 import { HorizontalScrollSection } from './components/common/HorizontalScrollSection';
@@ -39,42 +59,41 @@ import { DoctorCard } from './components/cards/DoctorCard';
 import { DiagnosticCard } from './components/cards/DiagnosticCard';
 import { FacilityCard } from './components/cards/FacilityCard';
 import { BottomNavBar } from './components/navigation/BottomNavBar';
-
 import { DoctorDetailModal } from './components/modals/DoctorDetailModal';
 import { DiagnosticDetailModal } from './components/modals/DiagnosticDetailModal';
 import { DepartmentDetailModal } from './components/modals/DepartmentDetailModal';
 import { FacilityDetailModal } from './components/modals/FacilityDetailModal';
 import { BookingSuccessModal } from './components/modals/BookingSuccessModal';
 import { EmergencyModal } from './components/modals/EmergencyModal';
-
 import { ViewAllScreen } from './components/views/ViewAllScreen';
 import { SearchScreen } from './components/views/SearchScreen';
 import { BookingsCartScreen } from './components/views/BookingsCartScreen';
-import { ScreenshotGalleryModal } from './components/showcase/ScreenshotGalleryModal';
+
+// Portion 5: Patient Portal
+import { PatientPortalScreen } from './components/portion5_portal/PatientPortalScreen';
 
 export default function App() {
-  // Navigation & View States
-  const [activeTab, setActiveTab] = useState<ActiveTab>('home');
+  // Master Active Portion State (Portions 1 to 5)
+  const [activePortion, setActivePortion] = useState<ActivePortion>('portion4_medswiggy');
+  const [isMobileFrame, setIsMobileFrame] = useState(false);
+  const [isDeliverablesGuideOpen, setIsDeliverablesGuideOpen] = useState(false);
+
+  // Portion 4 States (MedSwiggy)
+  const [swiggyActiveTab, setSwiggyActiveTab] = useState<ActiveTab>('home');
   const [viewAllCategory, setViewAllCategory] = useState<ViewAllCategory | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Location & Quick Filters
   const [selectedBranch, setSelectedBranch] = useState(HOSPITAL_BRANCHES[0].name);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  // Active Modals
+  // Modals
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedDiagnostic, setSelectedDiagnostic] = useState<DiagnosticService | null>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedFacility, setSelectedFacility] = useState<HospitalFacility | null>(null);
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
-  const [isShowcaseOpen, setIsShowcaseOpen] = useState(false);
 
-  // Frame toggle: Mobile frame mockup vs Full responsive view
-  const [isMobileFrame, setIsMobileFrame] = useState(false);
-
-  // Success Confirmation Modal State
+  // Success Confirmation State
   const [successBooking, setSuccessBooking] = useState<{
     type: 'doctor' | 'diagnostic';
     title: string;
@@ -86,7 +105,7 @@ export default function App() {
     amount: number;
   } | null>(null);
 
-  // Seeded Appointments & Diagnostic Bookings
+  // Shared Bookings State
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: 'apt-101',
@@ -94,14 +113,14 @@ export default function App() {
       doctorName: 'Dr. Sarah Mukherjee',
       departmentName: 'Cardiology',
       avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=500&q=80',
-      date: 'Today, Oct 15',
+      date: 'Today, Oct 17',
       slot: '02:45 PM',
       patientName: 'Alex Johnson',
       consultationType: 'In-Hospital',
       fee: 799,
       tokenNumber: 'CP-DOC-4821',
       status: 'Confirmed',
-      createdAt: '2026-10-15T09:30:00Z',
+      createdAt: '2026-10-17T09:30:00Z',
     },
   ]);
 
@@ -111,23 +130,22 @@ export default function App() {
       testId: 'diag-1',
       testName: 'CarePulse Master Health Checkup (88 Tests)',
       collectionType: 'Home Sample Collection',
-      scheduledDate: 'Tomorrow, Oct 16',
+      scheduledDate: 'Tomorrow, Oct 18',
       scheduledTime: '08:00 AM - 09:00 AM',
       patientName: 'Alex Johnson',
       address: 'Flat 402, Green Glen Layout, Indiranagar',
       price: 1499,
       status: 'Scheduled',
       tokenNumber: 'CP-LAB-9104',
-      createdAt: '2026-10-15T10:15:00Z',
+      createdAt: '2026-10-17T10:15:00Z',
     },
   ]);
 
-  // Handle Quick Filter Toggle
+  // Handle Quick Filter Toggle in Portion 4
   const handleToggleFilter = (filterId: string) => {
     setActiveFilter((prev) => (prev === filterId ? null : filterId));
   };
 
-  // Filtered Data based on Quick Filter
   const filteredDoctors = useMemo(() => {
     if (!activeFilter) return DOCTORS;
     if (activeFilter === 'availableToday') return DOCTORS.filter((d) => d.availableToday);
@@ -151,7 +169,27 @@ export default function App() {
     return HOSPITAL_FACILITIES;
   }, [activeFilter]);
 
-  // Appointment Booking Confirmation Handler
+  // Portion 2 Booking Confirmation callback
+  const handleAuraHealthBookingConfirmed = (receipt: BookingReceipt) => {
+    const newApt: Appointment = {
+      id: receipt.bookingId,
+      doctorId: receipt.doctorId,
+      doctorName: receipt.doctorName,
+      departmentName: receipt.specialty,
+      avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=500&q=80',
+      date: receipt.date,
+      slot: receipt.time,
+      patientName: receipt.patientName,
+      consultationType: receipt.consultationType === 'In-Person Visit' ? 'In-Hospital' : 'Video Call',
+      fee: receipt.fee,
+      tokenNumber: receipt.tokenNumber,
+      status: 'Confirmed',
+      createdAt: new Date().toISOString(),
+    };
+    setAppointments((prev) => [newApt, ...prev]);
+  };
+
+  // Portion 4 Doctor Booking callback
   const handleConfirmDoctorBooking = (bookingData: {
     doctorId: string;
     doctorName: string;
@@ -187,7 +225,7 @@ export default function App() {
     });
   };
 
-  // Diagnostic Test Booking Confirmation Handler
+  // Portion 4 Diagnostic Booking callback
   const handleConfirmDiagnosticBooking = (bookingData: {
     testId: string;
     testName: string;
@@ -222,24 +260,9 @@ export default function App() {
     });
   };
 
-  // Cancel handlers
-  const handleCancelAppointment = (id: string) => {
-    setAppointments((prev) => prev.filter((a) => a.id !== id));
-  };
-
-  const handleCancelDiagnostic = (id: string) => {
-    setDiagnosticBookings((prev) => prev.filter((d) => d.id !== id));
-  };
-
-  // Handle Promo Banner Book CTA
-  const handleBookPromo = (banner: PromoBanner) => {
-    const matchingDiag = DIAGNOSTIC_SERVICES[0];
-    setSelectedDiagnostic(matchingDiag);
-  };
-
-  // Handle Bottom Nav Tab Change
-  const handleTabChange = (tab: ActiveTab) => {
-    setActiveTab(tab);
+  // Portion 4 Tab Change
+  const handleSwiggyTabChange = (tab: ActiveTab) => {
+    setSwiggyActiveTab(tab);
     if (tab === 'home') {
       setViewAllCategory(null);
     } else if (tab === 'doctors') {
@@ -251,26 +274,24 @@ export default function App() {
     }
   };
 
-  // Content rendering helper
-  const renderMainContent = () => {
-    // 1. If currently viewing "My Bookings"
-    if (activeTab === 'bookings') {
+  // Render Portion 4 Content
+  const renderPortion4Content = () => {
+    if (swiggyActiveTab === 'bookings') {
       return (
         <BookingsCartScreen
           appointments={appointments}
           diagnosticBookings={diagnosticBookings}
-          onBack={() => setActiveTab('home')}
-          onCancelAppointment={handleCancelAppointment}
-          onCancelDiagnostic={handleCancelDiagnostic}
+          onBack={() => setSwiggyActiveTab('home')}
+          onCancelAppointment={(id) => setAppointments((prev) => prev.filter((a) => a.id !== id))}
+          onCancelDiagnostic={(id) => setDiagnosticBookings((prev) => prev.filter((d) => d.id !== id))}
           onExploreServices={() => {
-            setActiveTab('home');
+            setSwiggyActiveTab('home');
             setViewAllCategory(null);
           }}
         />
       );
     }
 
-    // 2. If currently viewing a "View All" screen
     if (viewAllCategory) {
       return (
         <ViewAllScreen
@@ -281,7 +302,7 @@ export default function App() {
           facilities={HOSPITAL_FACILITIES}
           onBack={() => {
             setViewAllCategory(null);
-            setActiveTab('home');
+            setSwiggyActiveTab('home');
           }}
           onSelectDepartment={(dept) => setSelectedDepartment(dept)}
           onSelectDoctor={(doc) => setSelectedDoctor(doc)}
@@ -293,7 +314,6 @@ export default function App() {
       );
     }
 
-    // 3. Homepage Swiggy Experience
     return (
       <main className="pb-24">
         {/* Swiggy Header */}
@@ -303,7 +323,7 @@ export default function App() {
           onOpenSearch={() => setIsSearchOpen(true)}
           selectedBranch={selectedBranch}
           onSelectBranch={setSelectedBranch}
-          onOpenBookings={() => setActiveTab('bookings')}
+          onOpenBookings={() => setSwiggyActiveTab('bookings')}
           appointmentCount={appointments.length}
           diagnosticCount={diagnosticBookings.length}
           activeFilter={activeFilter}
@@ -314,28 +334,10 @@ export default function App() {
         {/* Promotional Health Checkup Banner Carousel */}
         <PromoBannerCarousel
           banners={PROMO_BANNERS}
-          onBookPromo={handleBookPromo}
+          onBookPromo={() => setSelectedDiagnostic(DIAGNOSTIC_SERVICES[0])}
         />
 
-        {/* Active Filter Notice if applied */}
-        {activeFilter && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-xs text-orange-950 font-medium">
-              <span>
-                Filtered by: <strong>{activeFilter}</strong>
-              </span>
-              <button
-                type="button"
-                onClick={() => setActiveFilter(null)}
-                className="font-bold underline text-orange-700 hover:text-orange-900 cursor-pointer"
-              >
-                Clear Filter
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* SECTION 1: DEPARTMENTS (Horizontally Scrollable) */}
+        {/* SECTION 1: DEPARTMENTS */}
         <HorizontalScrollSection<Department>
           id="departments-section"
           title="Hospital Departments"
@@ -354,7 +356,7 @@ export default function App() {
           )}
         />
 
-        {/* SECTION 2: FIND A DOCTOR (Horizontally Scrollable) */}
+        {/* SECTION 2: FIND A DOCTOR */}
         <HorizontalScrollSection<Doctor>
           id="doctors-section"
           title="Find a Doctor"
@@ -374,7 +376,7 @@ export default function App() {
           )}
         />
 
-        {/* SECTION 3: DIAGNOSTIC SERVICES (Horizontally Scrollable) */}
+        {/* SECTION 3: DIAGNOSTIC SERVICES */}
         <HorizontalScrollSection<DiagnosticService>
           id="diagnostics-section"
           title="Diagnostic & Health Checkups"
@@ -394,7 +396,7 @@ export default function App() {
           )}
         />
 
-        {/* SECTION 4: HOSPITAL FACILITIES (Horizontally Scrollable) */}
+        {/* SECTION 4: HOSPITAL FACILITIES */}
         <HorizontalScrollSection<HospitalFacility>
           id="facilities-section"
           title="Hospital Facilities & Infrastructure"
@@ -414,95 +416,70 @@ export default function App() {
           )}
         />
 
-        {/* Trust Badges Footer Bar (Swiggy Assured style) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-2xl bg-white border border-slate-200 shadow-xs text-center text-xs">
-            <div className="p-2">
-              <span className="font-extrabold text-slate-900 block text-sm">NABH & JCI</span>
-              <span className="text-slate-500">Gold Quality Standard</span>
-            </div>
-            <div className="p-2 border-l border-slate-100">
-              <span className="font-extrabold text-orange-600 block text-sm">30-Min</span>
-              <span className="text-slate-500">Home Sample Collection</span>
-            </div>
-            <div className="p-2 border-l border-slate-100">
-              <span className="font-extrabold text-emerald-600 block text-sm">Zero Wait</span>
-              <span className="text-slate-500">Emergency & OPD Triage</span>
-            </div>
-            <div className="p-2 border-l border-slate-100">
-              <span className="font-extrabold text-slate-900 block text-sm">4.92 ★</span>
-              <span className="text-slate-500">18,500+ Patient Reviews</span>
-            </div>
-          </div>
-        </div>
+        {/* Bottom Navigation for Portion 4 */}
+        <BottomNavBar
+          activeTab={swiggyActiveTab}
+          onChangeTab={handleSwiggyTabChange}
+          bookingBadgeCount={appointments.length + diagnosticBookings.length}
+        />
       </main>
     );
   };
 
   return (
     <div className={`min-h-screen bg-slate-100 ${isMobileFrame ? 'py-4 sm:py-8 flex justify-center' : ''}`}>
-      {/* Container wrapper for optional mobile frame preview */}
+      {/* Mobile Simulator Frame or Full Screen Layout */}
       <div
         className={`w-full transition-all duration-300 ${
           isMobileFrame
-            ? 'max-w-md bg-white shadow-2xl rounded-3xl overflow-hidden border-8 border-slate-900 min-h-[850px] relative'
+            ? 'max-w-[430px] bg-white shadow-2xl rounded-[48px] overflow-hidden border-[10px] border-slate-900 min-h-[920px] relative'
             : 'bg-white min-h-screen'
         }`}
       >
-        {/* Floating Top Control Toolbar for Showcase & Mobile/Desktop View Switch */}
-        <aside aria-label="Reviewer controls" className="bg-slate-900 text-white px-4 py-2 flex items-center justify-between text-xs border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-bold text-[11px] tracking-wide text-slate-200">
-              CarePulse • Swiggy Hospital UX
-            </span>
+        {/* iPhone Dynamic Island Simulator when in mobile frame mode */}
+        {isMobileFrame && (
+          <div className="bg-slate-950 pt-3 pb-2 px-6 flex items-center justify-between text-white text-[11px] font-bold select-none">
+            <span>09:41</span>
+            <div className="w-24 h-5 rounded-full bg-black mx-auto border border-white/10 flex items-center justify-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-900 mr-2" />
+              <div className="w-2 h-2 rounded-full bg-indigo-500/80" />
+            </div>
+            <div className="flex items-center gap-1">
+              <span>5G</span>
+              <div className="w-4 h-2.5 border border-white rounded-xs p-0.5">
+                <div className="h-full bg-white rounded-2xs w-full" />
+              </div>
+            </div>
           </div>
+        )}
 
-          <div className="flex items-center gap-2">
-            {/* Deliverables & Screenshots Showcase Button */}
-            <button
-              type="button"
-              onClick={() => setIsShowcaseOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-bold text-[11px] shadow-xs transition-colors cursor-pointer"
-            >
-              <Camera className="w-3.5 h-3.5" />
-              <span>Deliverables Showcase</span>
-            </button>
-
-            {/* Mobile / Desktop Toggle */}
-            <button
-              type="button"
-              onClick={() => setIsMobileFrame(!isMobileFrame)}
-              className="hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold transition-colors cursor-pointer"
-              title="Toggle view mode"
-            >
-              {isMobileFrame ? (
-                <>
-                  <Monitor className="w-3 h-3 text-orange-400" />
-                  <span>Desktop</span>
-                </>
-              ) : (
-                <>
-                  <Smartphone className="w-3 h-3 text-orange-400" />
-                  <span>Mobile View</span>
-                </>
-              )}
-            </button>
-          </div>
-        </aside>
-
-        {/* Main Content Area */}
-        {renderMainContent()}
-
-        {/* Bottom Navigation Bar */}
-        <BottomNavBar
-          activeTab={activeTab}
-          onChangeTab={handleTabChange}
-          bookingBadgeCount={appointments.length + diagnosticBookings.length}
+        {/* Master Suite Navigation Bar */}
+        <MasterSuiteHeader
+          activePortion={activePortion}
+          onSelectPortion={setActivePortion}
+          isMobileFrame={isMobileFrame}
+          onToggleMobileFrame={() => setIsMobileFrame(!isMobileFrame)}
+          onOpenDeliverablesGuide={() => setIsDeliverablesGuideOpen(true)}
         />
+
+        {/* PORTION SWITCHER OUTLET */}
+        {activePortion === 'portion1_auracare' && <AuraCareStaffScreen />}
+        {activePortion === 'portion2_aurahealth' && (
+          <AuraHealthDirectoryScreen onBookingConfirmed={handleAuraHealthBookingConfirmed} />
+        )}
+        {activePortion === 'portion3_auraflow' && <AuraFlowClinicalScreen />}
+        {activePortion === 'portion4_medswiggy' && renderPortion4Content()}
+        {activePortion === 'portion5_portal' && <PatientPortalScreen />}
+
+        {/* iPhone Home Indicator bar when in mobile frame */}
+        {isMobileFrame && (
+          <div className="absolute bottom-1 inset-x-0 h-4 flex items-center justify-center pointer-events-none z-50">
+            <div className="w-32 h-1 rounded-full bg-slate-800" />
+          </div>
+        )}
       </div>
 
-      {/* MODAL 1: Doctor Detail & Booking */}
+      {/* PORTION 4 MODALS */}
       {selectedDoctor && (
         <DoctorDetailModal
           doctor={selectedDoctor}
@@ -511,7 +488,6 @@ export default function App() {
         />
       )}
 
-      {/* MODAL 2: Diagnostic Service Detail & Booking */}
       {selectedDiagnostic && (
         <DiagnosticDetailModal
           service={selectedDiagnostic}
@@ -520,7 +496,6 @@ export default function App() {
         />
       )}
 
-      {/* MODAL 3: Department Detail & Specialists */}
       {selectedDepartment && (
         <DepartmentDetailModal
           department={selectedDepartment}
@@ -533,7 +508,6 @@ export default function App() {
         />
       )}
 
-      {/* MODAL 4: Hospital Facility Detail */}
       {selectedFacility && (
         <FacilityDetailModal
           facility={selectedFacility}
@@ -541,7 +515,6 @@ export default function App() {
         />
       )}
 
-      {/* MODAL 5: Booking Success Confirmation Pass */}
       {successBooking && (
         <BookingSuccessModal
           type={successBooking.type}
@@ -555,12 +528,11 @@ export default function App() {
           onClose={() => setSuccessBooking(null)}
           onViewAllBookings={() => {
             setSuccessBooking(null);
-            setActiveTab('bookings');
+            setSwiggyActiveTab('bookings');
           }}
         />
       )}
 
-      {/* MODAL 6: 24/7 Emergency SOS Line */}
       {isEmergencyOpen && (
         <EmergencyModal
           onClose={() => setIsEmergencyOpen(false)}
@@ -568,7 +540,6 @@ export default function App() {
         />
       )}
 
-      {/* MODAL 7: Search Screen */}
       {isSearchOpen && (
         <SearchScreen
           searchQuery={searchQuery}
@@ -597,26 +568,13 @@ export default function App() {
         />
       )}
 
-      {/* MODAL 8: Deliverables & Screenshots Showcase */}
-      {isShowcaseOpen && (
-        <ScreenshotGalleryModal
-          onClose={() => setIsShowcaseOpen(false)}
+      {/* GLOBAL DELIVERABLES & QUESTIONS 1-5 GUIDE */}
+      {isDeliverablesGuideOpen && (
+        <UnifiedDeliverablesModal
+          onClose={() => setIsDeliverablesGuideOpen(false)}
           isMobileFrame={isMobileFrame}
           onToggleMobileFrame={() => setIsMobileFrame(!isMobileFrame)}
-          onNavigateToView={(view) => {
-            if (view === 'home') {
-              setActiveTab('home');
-              setViewAllCategory(null);
-            } else if (view === 'doctors') {
-              setViewAllCategory('doctors');
-            } else if (view === 'diagnostics') {
-              setViewAllCategory('diagnostics');
-            } else if (view === 'facilities') {
-              setViewAllCategory('facilities');
-            } else if (view === 'viewAll') {
-              setViewAllCategory('departments');
-            }
-          }}
+          onSelectPortion={(p) => setActivePortion(p)}
         />
       )}
     </div>

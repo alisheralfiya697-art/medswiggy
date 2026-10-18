@@ -1,159 +1,123 @@
-# CarePulse - Swiggy-Style Hospital Home Screen
+# CarePulse Unified Hospital Suite (Questions 1 to 5)
 
-> **Question 4 Deliverable**: A visually engaging hospital app homepage inspired by Swiggy's card-based browsing experience, built with React 19, TypeScript, Tailwind CSS, and Lucide Icons.
-
----
-
-## 🌟 Executive Summary & Scenario
-
-The **CarePulse Hospital App** adapts Swiggy's consumer-grade browsing UX into an intuitive, patient-first healthcare discovery platform:
-* **Swiggy-Style Top Navigation**: Dynamic location selector with multiple hospital branches (Indiranagar, Whitefield, Koramangala, etc.), priority 24x7 emergency SOS trauma hotline, and live cart/token badge counter.
-* **Animated Search Experience**: Smart search bar with rotating contextual placeholders, live multi-entity suggestions (Doctors, Departments, Tests, Facilities), and popular trending health tags.
-* **Flash Health Checkup Promotional Banners**: Hero carousel featuring the **Executive Full Body Health Checkup (65% OFF)** with live countdown urgency timer, copyable promo coupon code (`CARE60`), and instant booking CTA.
-* **FlatList-Style Horizontal Scrolling**: Horizontally scrollable carousels with smooth momentum scroll, left/right desktop navigation arrows, touch-swipe snapping, and real-time scroll progress indicators for:
-  1. **Hospital Departments**
-  2. **Find a Doctor**
-  3. **Diagnostic Services**
-  4. **Hospital Facilities**
-* **Rich Metadata & Visual Hierarchy**: Star ratings with green badges (e.g. `4.94 ★`), average wait times (`Avg 12m wait`), instant availability flags (`⚡ Today, 2:45 PM`), strike-through pricing with discounts (`₹799` was `₹1,500`), and home sample collection tags.
-* **Dedicated "View All" Screens**: Multi-category tabbed catalog with real-time sorting (by rating, consultation fee, experience), specialty pills, and availability filters.
-* **Interactive Card Detail Modals**:
-  * **Doctor Booking**: In-hospital visit vs. HD Video Tele-consult, date & time slot selector, patient details, and digital queue token generation.
-  * **Diagnostic Booking**: Inclusions list (85+ parameters), preparation instructions, and 30-min home sample collection scheduler.
-  * **Facility Explorer**: Technology showcase, bed capacity, and direct emergency desk dialer.
-* **Remote Images with Robust Error Handling**: Skeleton shimmer loaders during network fetch and graceful fallback placeholders with retry actions.
-* **Deliverables Showcase & Device Toggle**: In-app **Deliverables Showcase** modal and **Mobile Viewport / Desktop View** toggle for instant grading.
+> **Single Unified React Native Application** integrating all requirements across Questions 1 through 5, consolidating:
+> - `https://github.com/alisheralfiya697-art/Aura-Care.git` (Question 1)
+> - `https://github.com/alisheralfiya697-art/AuraHealth.git` (Question 2)
+> - `https://github.com/alisheralfiya697-art/AuraFlow-Clinic.git` (Question 3)
+> - `https://github.com/alisheralfiya697-art/medswiggy.git` (Question 4)
+> - Plus **Portion 5: Unified Patient Portal, Digital Health Pass & 24/7 GPS SOS Emergency Dispatch**
 
 ---
 
-## 📸 Deliverables & Screenshot Guide
+## 🌟 Executive Architecture Overview
 
-The application contains four primary deliverable views accessible directly via the in-app **"Deliverables Showcase"** button at the top:
-
-### 1. Hospital Homepage (`/`)
-* **Location Bar**: Shows `"Apollo-Care Hub, Indiranagar"` with a campus selector modal.
-* **Emergency SOS**: Quick-access red priority button linking to 24/7 trauma triage.
-* **Rotating Search Bar**: Alternates between doctor names, health packages, and scans.
-* **Promotional Banner**: High-impact gradient card for Executive Health Checkup with countdown timer and promo code `CARE60`.
-* **Quick Filter Chips**: `⚡ Available Today`, `⭐ 4.9+ Rated`, `🧪 Home Collection`, `🚨 24x7 Open`, `🏷️ Deals > 50% Off`.
-
-```
-+------------------------------------------------------------------------+
-| 📍 Apollo-Care Hub, Indiranagar [v]              [ 🚨 24x7 SOS ] [ 📅 My Bookings (2) ] |
-+------------------------------------------------------------------------+
-| [ 🔍 Search 'Dr. Sarah (Cardiologist)'...                    [ ⚙️ Filters ] ] |
-| [ ⚡ Available Today ] [ ⭐ 4.9+ Rated ] [ 🧪 Home Collection ] [ 🚨 24/7 Open ]   |
-+------------------------------------------------------------------------+
-| [🎉 SUPER SAVER HEALTH PASS]                   [Ends in 05h:42m:18s]  |
-| Executive Full Body Health Checkup (85+ Tests)                         |
-| ₹1,699  ~~₹4,999~~ [65% OFF]      [CODE: CARE60]   [ Book Package -> ] |
-+------------------------------------------------------------------------+
-```
+This project unites all individual features into a **single, reactive, fully interactive application** featuring:
+1. **Global Suite Navigator**: Switch seamlessly between all 5 portions using the persistent top navigation bar.
+2. **iPhone 16 Pro Simulator & Desktop Mode**: Test inside an authentic mobile device shell with iOS status bar, dynamic island, rounded chassis, and home indicator bar, or switch to the fluid responsive layout.
+3. **Cross-Portion Data Interactivity**:
+   - Appointments booked in **Portion 2 (AuraHealth)** or **Portion 4 (MedSwiggy)** immediately sync into **Portion 1 (AuraCare Clinical Schedule)** and **Portion 5 (Patient Health Pass)**.
+   - Clinical orders & medication titrations approved in **Portion 3 (AuraFlow)** immediately populate the **Portion 5 Digital Prescription Locker**.
+   - Inpatients tracked in **Portion 1** connect directly to the clinical encounter engine in **Portion 3**.
 
 ---
 
-### 2. Horizontally Scrolled Sections (FlatList-Style)
-All four sections support horizontal swipe and desktop arrow navigation:
+## 📱 Portions 1 to 5 Breakdown
 
-1. **Hospital Departments**:
-   * *Cardiology* (Avg 12m wait • 16 Doctors • 4.9 ★)
-   * *Neurology & Spine* (Avg 15m wait • 12 Doctors • 4.85 ★)
-   * *Orthopedics* (Avg 10m wait • 14 Doctors • 4.92 ★)
-   * *Pediatrics & NICU* (Avg 8m wait • 11 Doctors • 4.95 ★)
-   * *Oncology*, *Gastroenterology*, *Dermatology*, *ENT*
-
-2. **Find a Doctor**:
-   * *Dr. Sarah Mukherjee* (Senior Interventional Cardiologist • 18+ yrs • 4.94 ★ • ⚡ Today 2:45 PM • ₹799 ~~₹1500~~)
-   * *Dr. Arjun Varma* (Lead Robotic Joint Replacement • 15+ yrs • 4.91 ★ • ⚡ Today 3:15 PM • ₹699 ~~₹1200~~)
-   * *Dr. Priya Ramaswamy* (Chief Pediatrician & Neonatologist • 14+ yrs • 4.98 ★ • ₹599)
-   * *Dr. Rohan Kashyap* (Comprehensive Stroke Specialist • 16+ yrs • Tomorrow 10:30 AM)
-   * *Dr. Ananya Sharma* & *Dr. Alok Nath Sengupta*
-
-3. **Diagnostic Services**:
-   * *CarePulse Master Health Checkup* (88 Tests • Reports in 6h • 🧪 Home Pickup in 30m • ₹1,499)
-   * *Advanced 3-Tesla Brain MRI* (High-res DICOM CD • 4h turnaround • ₹3,499)
-   * *Complete Cardiac Risk Profile & ECG* (16 Tests • hs-CRP & Lipids • ₹999)
-   * *Vitamin D3 & B12 Combo* (₹599)
-   * *Diabetes Early Detection & HbA1c Panel* (₹449)
-
-4. **Hospital Facilities**:
-   * *24x7 Level-1 Emergency & Trauma Care* (Zero Wait • 24 Trauma Beds • Call Desk)
-   * *Da Vinci XI Robotic Surgery Suite* (4-Arm Minimally Invasive Suite)
-   * *Presidential & Executive Patient Suites* (5-Star Luxury Inpatient)
-   * *Ultra-Modern Hybrid Cath Lab* (Philips Azurion 7 Biplane)
-   * *24x7 Smart In-House Pharmacy* (15-min delivery)
+### 🏥 Portion 1: AuraCare • Hospital Staff & Inpatient Management (Question 1)
+*Repository: `https://github.com/alisheralfiya697-art/Aura-Care.git`*
+- **Clinical Dashboard Cards**:
+  - **Patient Count**: 148 active inpatients (+14 admitted today, 9 discharged).
+  - **Today's Appointments**: 32 total consultations (10 completed, 18 scheduled).
+  - **On-Duty Roster**: 18 available physicians, 5 in OR surgical suites, 9 in consultation.
+  - **High Priority Tasks**: 7 pending clinical actions (3 marked urgent).
+- **Staff Roster & Scheduling**:
+  - Filter by department (`Cardiology`, `Orthopedics`, `Neurology`, `Pediatrics`, `Emergency`).
+  - Search staff by name or specialty.
+  - Status indicators (`Available`, `In Surgery`, `In Consultation`, `Off Duty`).
+  - Interactive **Add Staff Member** modal with instant roster update.
+- **Inpatient Census & Bed Allocation**:
+  - Room and bed tracking (`Room 304-A, Bed 01`).
+  - Acuity Triage Badges: `Critical` (pulsing red), `Urgent`, `Stable`, `Observation`.
+  - Point-of-care vitals monitoring: Heart Rate, Blood Pressure, Temperature, SpO2.
+  - Interactive **Patient Detail Modal** with diagnosis, allergies, and blood type.
+- **Departmental Bed Occupancy**: Live gauge tracking capacity across Cardiology (93%), ICU (90%), Neurology (87%), and NICU (73%).
+- **Clinical Tasks Checklist**: Interactive check-off system for medical rounds, MRI reviews, and pharmacy restocking.
 
 ---
 
-### 3. Card Details & Slot Booking Screens
-Clicking any card opens a comprehensive detail view:
-* **Doctor Profile Modal**:
-  * Bio, hospital distance, languages spoken, total patients treated.
-  * Selection between **In-Hospital Visit** vs. **HD Video Consult**.
-  * Dynamic date picker (Today, Tomorrow, Friday) and morning/afternoon slot grid.
-  * Patient name & phone input.
-  * Instant generation of digital **Queue Token Pass** (`CP-DOC-XXXX`) with QR Code!
-* **Diagnostic Test Modal**:
-  * Complete list of included parameters.
-  * Toggle between **Home Sample Collection** (with address field) and **Hospital Lab Visit**.
-  * Fasting requirements indicator.
-* **Department Modal**:
-  * List of specialized medical procedures and direct 1-tap booking for specialists.
-* **Facility Modal**:
-  * Technical specifications, bed capacity, and direct hotline dialer.
+### 👨‍⚕️ Portion 2: AuraHealth • Doctor Directory & Appointment Booking (Question 2)
+*Repository: `https://github.com/alisheralfiya697-art/AuraHealth.git`*
+- **FlatList Doctor Directory**:
+  - Real-time search across doctor name, subspecialty, and clinical conditions.
+  - Specialty category pills (`All`, `Cardiology`, `Orthopedics`, `Pediatrics`, `Neurology`, `Dermatology`).
+- **Comprehensive Doctor Profiles**:
+  - Bio, academic degrees (AIIMS, CMC Vellore, Mount Sinai), board certifications, accepted insurances, and languages spoken.
+  - Star ratings (`4.96 ★`) with review counts.
+- **Interactive Date & TimeSlotPicker**:
+  - Date selector (`Today, Oct 17`, `Tomorrow`, `Monday`).
+  - Time slots grouped by Morning, Afternoon, Evening.
+  - **Visual Disabled State**: Booked slots are crossed out and disabled (`cursor-not-allowed`).
+- **Multi-Step Booking Flow**:
+  - Toggle between **In-Person OPD Visit** and **HD Video Telehealth**.
+  - Patient intake form (Full Name, Phone).
+  - Instant generation of digital **Queue Token Pass** (`#AH-DOC-XXXX`) with QR Code receipt and return navigation.
 
 ---
 
-### 4. Dedicated "View All" Screen
-Accessible by tapping any section's **"View All"** button:
-* Category switcher pills for **Departments**, **Doctors**, **Diagnostics**, and **Facilities**.
-* Real-time sorting:
-  * Recommended
-  * Top Rated (★)
-  * Price: Low to High
-  * Experience (Doctors)
-* Subcategory filters (e.g. filter tests by Cardiac, MRI, Diabetes; filter doctors by Cardiology, Ortho).
-* "⚡ Today Only" toggle for instant consultation slots.
+### ⚡ Portion 3: AuraFlow Clinical OS • 1-Tap Encounter Bundle (Question 3)
+*Repository: `https://github.com/alisheralfiya697-art/AuraFlow-Clinic.git`*
+- **The Challenge Solved**: Eliminates the 26-click fragmented EHR workflow (Epic/Cerner tab fatigue).
+- **Step 1: Point-of-Care Encounter Findings**:
+  - Evaluates today's findings against baseline (Marcus Vance, 54M, Type 2 DM).
+  - Delta comparison: HbA1c rose `7.4% → 8.6%`, BP `144/92`, eGFR `68 mL/min`.
+- **Step 2: Context-Aware 1-Tap Order Bundle**:
+  - **Medication Titration**: Metformin HCl micro-steppers (`500 mg BID` → `1000 mg BID (Target)`).
+  - **New Guideline Therapy**: Initiate Empagliflozin (Jardiance) `10 mg QD` with cardio-renal safety check.
+  - **Surveillance Requisitions**: 6-Week Basic Metabolic Panel + Urine Albumin/Creatinine Ratio phlebotomy standing order.
+  - **Follow-Up Scheduling**: 6-Week Outpatient Clinic Visit with Dr. Sarah Chen.
+  - **Patient Action Plan**: Grade-6 reading level plain-language care summary.
+- **Step 3: Verification & Dispatch Audit**:
+  - Instant 1-tap transmission of e-Prescriptions to central pharmacy and patient portal push.
 
 ---
 
-## 🛠️ Technical Implementation
-
-### FlatList-Style Horizontal Scrolling Architecture
-The `HorizontalScrollSection` component mimics React Native's `FlatList horizontal`:
-* Accepts generic data `T[]` with `keyExtractor` and `renderItem`.
-* Employs CSS snap points (`snap-x snap-mandatory`) with `no-scrollbar` styling.
-* Computes scroll boundaries (`canScrollLeft`, `canScrollRight`) and updates the progress indicator bar dynamically.
-* Desktop navigation arrows allow keyboard and mouse accessibility.
-
-### Remote Images with Loading and Error Fallbacks
-The `RemoteImage` component enforces:
-1. **Loading State**: An animated gradient shimmer skeleton pulse (`@keyframes shimmer`) while the remote asset loads.
-2. **Success State**: Smooth opacity fade-in transition (`opacity-0` to `opacity-100`).
-3. **Error State**: Graceful fallback illustration with custom text and an interactive **Retry** button.
-
----
-
-## 📱 Bottom Navigation Bar
-1. **Home**: Primary Swiggy-style hospital homepage.
-2. **Doctors**: Direct link to the full doctors catalog with filters.
-3. **Lab Tests**: Direct link to diagnostic packages.
-4. **Bookings**: Patient dashboard showing confirmed appointments, queue tokens, and scheduled home lab pickups.
-5. **Facilities**: Campus infrastructure and 24x7 emergency directory.
+### 🛍️ Portion 4: MedSwiggy • Swiggy-Style Hospital Home Screen (Question 4)
+*Repository: `https://github.com/alisheralfiya697-art/medswiggy.git`*
+- **Swiggy Header & Campus Switcher**:
+  - Location selector (`Apollo-Care Hub, Indiranagar`, `Whitefield`, `Koramangala`, `Delhi`, `Mumbai`).
+  - Priority 24x7 Emergency SOS trauma helpline with zero-wait status.
+  - Rotating animated search bar with trending tags.
+  - Quick filter chips: `⚡ Available Today`, `⭐ 4.9+ Rated`, `🧪 Home Collection`, `🚨 24x7 Open`, `🏷️ Deals > 50% Off`.
+- **Hero Promotional Banner Carousel**:
+  - **Executive Full Body Health Checkup (65% OFF)** with live countdown urgency timer, copyable coupon `CARE60`, and instant booking CTA.
+- **4 Horizontally Scrollable FlatList Carousels**:
+  1. **Departments**: Cardiology, Neurology, Orthopedics, Pediatrics, Oncology, Gastroenterology, Dermatology, ENT (with average wait times).
+  2. **Find a Doctor**: Rich doctor cards with portraits, verified badges, rating pills, next slot time, and discount fees.
+  3. **Diagnostic Services**: 88-parameter checkups, 3T Silent Brain MRI, Cardiac Risk Profile, with 30-min home sample collection.
+  4. **Hospital Facilities**: 24/7 Level-1 Trauma Care, Da Vinci XI Robotic Suite, Deluxe Suites, Hybrid Cath Lab.
+- **Dedicated "View All" Screens**: Multi-category tabbed catalog with sorting (by rating, fee, experience) and filters.
 
 ---
 
-## 🚀 Running the Project
+### 📱 Portion 5: CarePortal • Unified Patient Health Pass & Emergency Hub (Question 5)
+- **Digital Health Pass**: Verified hospital QR code identity card with blood group, primary physician, and live queue token (`#CP-DOC-4821`).
+- **Prescription Locker**: Displays all active digital prescriptions (including Metformin and Empagliflozin approved via AuraFlow).
+- **Diagnostic Lab Reports**: Access NABL certified digital reports (Master Health Checkup, 3T MRI Brain, ECG) with PDF download simulation.
+- **GPS Emergency Ambulance Dispatch**: Simulated real-time GPS tracking route showing ETA (6 mins), paramedic contact, and pre-allocated ICU bed.
+
+---
+
+## 🚀 Running the Unified Project
 
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Start the development server
+# 2. Run local development server
 npm run dev
 
 # 3. Build for production
 npm run build
 ```
 
-Open `http://localhost:3000` to interact with the application.
+Open `http://localhost:3000` in your browser. Use the top switcher to browse across Portions 1 to 5, toggle the iPhone 16 Pro simulator frame, and view the questions rubric guide!
